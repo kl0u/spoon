@@ -165,9 +165,17 @@ public class PositionBuilder {
 			}
 		} else if (node instanceof AbstractVariableDeclaration) {
 			AbstractVariableDeclaration variableDeclaration = (AbstractVariableDeclaration) node;
-			int modifiersSourceStart = variableDeclaration.modifiersSourceStart;
-			int declarationSourceStart = variableDeclaration.declarationSourceStart;
-			int declarationSourceEnd = variableDeclaration.declarationSourceEnd;
+//			int modifiersSourceStart = variableDeclaration.modifiersSourceStart;
+//			int declarationSourceStart = variableDeclaration.declarationSourceStart;
+//			int declarationSourceEnd = variableDeclaration.declarationSourceEnd;
+
+			int modifiersSourceStart = Math.max(variableDeclaration.modifiersSourceStart, sourceStart);
+			int declarationSourceStart = Math.max(variableDeclaration.declarationSourceStart, sourceStart);
+			int declarationSourceEnd = Math.max(declarationSourceStart, variableDeclaration.declarationSourceEnd);
+
+			variableDeclaration.modifiersSourceStart = modifiersSourceStart;
+			variableDeclaration.declarationSourceStart = declarationSourceStart;
+			variableDeclaration.declarationSourceEnd = declarationSourceEnd;
 
 			if (declarationSourceStart == 0 && declarationSourceEnd == 0) {
 				return SourcePosition.NOPOSITION;

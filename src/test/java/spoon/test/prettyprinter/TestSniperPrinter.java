@@ -49,10 +49,7 @@ import spoon.support.modelobs.ChangeCollector;
 import spoon.support.modelobs.SourceFragmentCreator;
 import spoon.support.sniper.SniperJavaPrettyPrinter;
 import spoon.test.GitHubIssue;
-import spoon.test.prettyprinter.testclasses.OneLineMultipleVariableDeclaration;
-import spoon.test.prettyprinter.testclasses.Throw;
-import spoon.test.prettyprinter.testclasses.InvocationReplacement;
-import spoon.test.prettyprinter.testclasses.ToBeChanged;
+import spoon.test.prettyprinter.testclasses.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,6 +88,23 @@ public class TestSniperPrinter {
 		testClassRename(tempDir, type -> {
 			Refactoring.changeTypeName(type, "Bar");
 		});
+	}
+
+	@Test
+	public void testEnumWithCommentPrinting(@TempDir File tempdir) {
+		String testClass = EnumWithComment.class.getName();
+		Launcher launcher = new Launcher();
+		launcher.addInputResource(getResourcePath(testClass));
+		launcher.getEnvironment().setPrettyPrinterCreator(() ->
+				new SniperJavaPrettyPrinter(launcher.getEnvironment()));
+		launcher.setBinaryOutputDirectory(tempdir);
+		launcher.buildModel();
+		Factory f = launcher.getFactory();
+
+		final CtClass<?> type = f.Class().get(testClass);
+
+		//print the changed model
+		launcher.prettyprint();
 	}
 
 	@Test

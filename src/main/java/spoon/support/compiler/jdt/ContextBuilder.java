@@ -85,10 +85,15 @@ public class ContextBuilder {
 
 	@SuppressWarnings("unchecked")
 	void enter(CtElement e, ASTNode node) {
+		ASTPair p = stack.peek();
 		stack.push(new ASTPair(e, node));
 		if (!(e instanceof CtPackage) || (compilationUnitSpoon.getFile() != null && compilationUnitSpoon.getFile().getName().equals(DefaultJavaPrettyPrinter.JAVA_PACKAGE_DECLARATION))) {
 			if (compilationunitdeclaration != null && !e.isImplicit()) {
 				try {
+					// TODO: 10.03.22 this is to cover for the parent being modified
+					node.sourceStart = Math.max(node.sourceStart, p.node.sourceStart);
+					node.sourceEnd = Math.max(node.sourceEnd, p.node.sourceEnd);
+
 					e.setPosition(this.jdtTreeBuilder.getPositionBuilder().buildPositionCtElement(e, node));
 				} catch (Exception ex) {
 					e.setPosition(SourcePosition.NOPOSITION);
